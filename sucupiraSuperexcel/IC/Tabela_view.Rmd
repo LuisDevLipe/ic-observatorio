@@ -1,0 +1,19 @@
+---
+title: "Tabela com as folhas da tabela"
+author: "Luis Felipe"
+date: "2024-09-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##
+
+```{r echo=FALSE}
+source('script.R', echo = FALSE)
+library(dplyr)
+
+tabela_indicando_as_colunas_presentes_em_cada_folha_da_tabela_de_entrada %>% knitr::kable()
+```
