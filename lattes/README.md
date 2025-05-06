@@ -2,6 +2,7 @@
 - [ ] Pesquisa, existe biblioteca/método para extração de dados do cnpq?
 
   - Lattes Extrator - Ferramenta oficial, extremamente burocrática do cnpq.
+  - https://github.com/jpmenachalco/scriptLattes/tree/main/scriptLattes
 
 - [ ] Pesquisa, existe biblioteca/parser para extração de dados de arquivo XML?
 
@@ -20,3 +21,15 @@
   - Playwright - biblioteca python para automação de navegadores web
   - burp - ferramenta de interceptação de requisições HTTP
   - mitmproxy - ferramenta de interceptação de requisições HTTP
+
+
+# Tarefa 1
+
+Vamos começar extraindo informações da seção: “Participação em bancas de trabalhos de conclusão” (PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO).
+
+A tarefa final consistirá em escrever um script R para:
+- extrair todas as informações de modo estruturado
+- de várias seções diferentes (a serem especificadas ainda)
+- a partir de N arquivos XML salvos em um diretório local
+
+[Arquivo XML para executar a tarefa](./gitignore/lattes-professor.xml)
