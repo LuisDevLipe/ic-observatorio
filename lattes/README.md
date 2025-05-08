@@ -33,3 +33,7 @@ A tarefa final consistirá em escrever um script R para:
 - a partir de N arquivos XML salvos em um diretório local
 
 [Arquivo XML para executar a tarefa](./gitignore/lattes-professor.xml)
+
+
+[xml2 lib](https://xml2.r-lib.org/)
+[xmlconvert](https://cran.r-project.org/web/packages/xmlconvert/xmlconvert.pdf)
