@@ -10,62 +10,68 @@ xml <- xml2::xml_find_first(file, ".//PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO"
 ## pegar todos os filhos
 # unique(xml2::xml_children(xml))
 
+# Get all the children of a node
+
+extract_children <- function(xml) {
+  childs <- list()
+  for (i in seq_along(xml2::xml_children(xml))) {
+    childs[[i]] <- xml2::xml_name(xml2::xml_children(xml)[[i]])
+  }
+  return(childs)
+}
+
+# get the properties names only
+extract_attrs <- function(file, x_path) {
+  node <- xml2::xml_find_all(file, x_path)
+  attrs <- list()
+  for (i in seq_along(node)) {
+    attr <- names(xml2::xml_attrs(node[[i]]))
+    attrs[[i]] <- attr
+  }
+  return(attrs)
+}
+
 # get all the unique children of the PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO
-childs <- list()
+# unique(extract_children(xml))
 
-for (i in 1:length(xml2::xml_children(xml))) {
-  child <- xml2::xml_children(xml)[[i]]
-  childs[[i]] <- xml2::xml_name(child)
-}
-unique(childs)
+# Unique children of the each children node of the PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO
+participacao_em_banca_children <- unique(extract_children(xml))
+# for (i in seq_along(participacao_em_banca_children)) {
+#   child <- participacao_em_banca_children[i]
+#   x_path <- paste0(".//", child)
+#   print(paste0("Unique children of ", child, ":"))
+#   print(unique(extract_children(xml2::xml_find_all(file, x_path))))
 
+# }
+participacao_em_banca_children
 # Get all the entries of the PARTICIPACAO-EM-BANCA-DE-MESTRADO
-dados_basicos_mestrado <- xml2::xml_find_all(file, ".//DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO")
-dados_basicos_mestrado_attrs <- list()
-# get only the properties names only
-for (i in seq_along(dados_basicos_mestrado)) {
-  attrs <- names(xml2::xml_attrs(dados_basicos_mestrado[[i]]))
-  dados_basicos_mestrado_attrs[[i]] <- attrs
-}
 # Unique attributes of the DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO
-# unique(unlist(dados_basicos_mestrado_attrs))
+unique(unlist(
+  extract_attrs(
+    file,
+    ".//DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO"
+  )
+))
 
+# Unique attributs of DETALHAMENTO-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO
+unique(unlist(
+  extract_attrs(
+    file,
+    ".//DETALHAMENTO-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO"
+  )
+))
+# Unique attributes of the PARTICIPACAO-EM-BANCA-DE-MESTRADO
+unique(unlist(
+  extract_attrs(
+    file,
+    ".//PARTICIPACAO-EM-BANCA-DE-MESTRADO"
+  )
+))
 
-# get all the entries of the DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO
-dados_basicos_doutorado <- xml2::xml_find_all(file, ".//DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO")
-dados_basicos_doutorado_attrs <- list()
-
-# get only the properties names only
-for (i in seq_along(dados_basicos_doutorado)) {
-  attrs <- names(xml2::xml_attrs(dados_basicos_doutorado[[i]]))
-  dados_basicos_doutorado_attrs[[i]] <- attrs
-}
-
-# Unique attributes of the DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-DOUTORADO
-# unique(unlist(dados_basicos_doutorado_attrs))
-
-
-# get all the entries of the PARTICIPACAO-EM-BANCA-DE-EXAME-QUALIFICACAO
-
-dados_basicos_exame_qualificacao <- xml2::xml_find_all(file, ".//DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-EXAME-QUALIFICACAO")
-dados_basicos_exame_qualificacao_attrs <- list()
-# get only the properties names only
-for (i in seq_along(dados_basicos_exame_qualificacao)) {
-  attrs <- names(xml2::xml_attrs(dados_basicos_exame_qualificacao[[i]]))
-  dados_basicos_exame_qualificacao_attrs[[i]] <- attrs
-}
-# Unique attributes of the DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-EXAME-QUALIFICACAO
-unique(unlist(dados_basicos_exame_qualificacao_attrs))
-
-
-# get all the entries of the PARTICIPACAO-EM-BANCA-DE-APERFEICOAMENTO-ESPECIALIZACAO
-dados_basicos_aperfeicoamento <- xml2::xml_find_all(file, ".//DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-APERFEICOAMENTO-ESPECIALIZACAO")
-dados_basicos_aperfeicoamento_attrs <- list()
-# get only the properties names only
-for (i in seq_along(dados_basicos_aperfeicoamento)) {
-  attrs <- names(xml2::xml_attrs(dados_basicos_aperfeicoamento[[i]]))
-  dados_basicos_aperfeicoamento_attrs[[i]] <- attrs
-}
-# Unique attributes of the DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-APERFEICOAMENTO-ESPECIALIZACAO
-unique(unlist(dados_basicos_aperfeicoamento_attrs))
-
+# Unique attributes of the INFORMACOES-ADICIONAIS
+unique(unlist(
+  extract_attrs(
+    file,
+    ".//INFORMACOES-ADICIONAIS"
+  )
+))
