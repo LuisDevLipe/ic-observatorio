@@ -93,9 +93,9 @@ for (i in seq_along(node_children)) {
   attrs <- xml2::xml_attrs(node_children[[i]])
   print(paste(names(attrs), attrs, sep = ": "))
   for (j in seq_along(attrs)) {
-    j_children <- xml2::xml_children(xml2::xml_fin)
-    j_attrs <- xml2::xml_attrs(j_children)
-    print(paste(names(j_attrs), j_attrs, sep = ": "))
+    # j_children <- xml2::xml_children(xml2::xml_find)
+    # j_attrs <- xml2::xml_attrs(j_children)
+    # print(paste(names(j_attrs), j_attrs, sep = ": "))
   }
 }
 # Example usage
@@ -104,3 +104,6 @@ for (i in seq_along(node_children)) {
 #   records.tags = "PARTICIPACAO-EM-BANCA-DE-MESTRADO",
 #   fields = c("DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO", "DETALHAMENTO-DA-PARTICIPACAO-EM-BANCA-DE-MESTRADO", "INFORMACOES-ADICIONAIS")
 # )
+file <- xml2::read_xml("./static/cv_lattes.xml")
+participacao <- xml2::xml_find_all(file, ".//PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO")
+Gattrs <- c()

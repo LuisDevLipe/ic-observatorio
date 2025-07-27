@@ -9,18 +9,21 @@ file <- xml2::read_xml("./static/test.xml")
 node <- xml2::xml_find_all(file, ".//Participacao")
 # node <- xml2::xml_find_all(file, ".//PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO")
 
-empty_df <- data.frame(
-  stringsAsFactors = FALSE,
-  name = character(),
-  value = character()
-)
+# Create a data frame for the top level table Participacao with 1 column
+TBL_participacao <- data.frame(matrix(ncol = 1, nrow = 0), stringsAsFactors = FALSE)
+# Create a data frame for each of the 2nd level tables with corresponding columns
+# Adding 'sequencia' as the first column for querying and joining later
+TBL_dados_basicos <- data.frame(matrix(ncol = 2, nrow = 0), stringsAsFactors = FALSE)
+TBL_detalhamento <- data.frame(matrix(ncol = 3, nrow = 0), stringsAsFactors = FALSE)
+TBL_participantes <- data.frame(matrix(ncol = 3, nrow = 0), stringsAsFactors = FALSE)
+# Create a data frame for the 3rd level tables with corresponding columns
+TBL_area <- data.frame(matrix(ncol = 3, nrow = 0), stringsAsFactors = FALSE)
+
 for (table in node) {
   # print(table)
   inner_nodes <- xml2::xml_children(table)
   table_name <- xml2::xml_name(table)
   table_attrs <- xml2::xml_attrs(table)
-  # add columns
-  empty_df <- cbind(empty_df, names(table_attrs))
   for (inner_table in inner_nodes) {
     # Get the name of the inner table
     inner_table_name <- xml2::xml_name(inner_table)
@@ -34,7 +37,12 @@ for (table in node) {
         collapse = ", "
       )
     ))
-    # Get the children of the inner table
+    # Every iteration will push the attributes of the inner table to the master table.
+    TBL_participacao <- rbind(TBL_participacao, inner_table_attrs)
+
+    # We will update the names of the columns in the master table
+    # Get the children of the inner table and push to the 2nd level table,
+    # we will also push the the attributes of the inner table to the 2nd level table
     inner_table_children <- xml2::xml_children(inner_table)
     for (child_table in inner_table_children) {
       # Check if the child has children
@@ -51,6 +59,14 @@ for (table in node) {
             collapse = ", "
           )
         ))
+        # Push the attributes of the child table to the 2nd level table
+        if (child_table_name == "Dados-basicos") {
+          TBL_dados_basicos <- rbind(TBL_dados_basicos, c(inner_table_attrs, child_table_attrs))
+        } else if (child_table_name == "Detalhamento") {
+          TBL_detalhamento <- rbind(TBL_detalhamento, c(inner_table_attrs, child_table_attrs))
+        } else if (child_table_name == "Participante") {
+          TBL_participantes <- rbind(TBL_participantes, c(inner_table_attrs, child_table_attrs))
+        }
       } else {
         # if the child has children, go deeper
         # bottom level child tables
@@ -68,11 +84,36 @@ for (table in node) {
               collapse = ", "
             )
           ))
+          # Push the attributes of the bottom child table to the 3rd level table
+          if (bottom_child_table_name == "Area") {
+            TBL_area <- rbind(TBL_area, c(inner_table_attrs, bottom_child_table_attrs))
+          }
         }
-
-        # print(paste("row: ", row))
-        print(empty_df)
       }
     }
   }
 }
+# Set the column names for each table
+colnames(TBL_participacao) <- c("sequencia")
+colnames(TBL_dados_basicos) <- c("sequencia", "natureza")
+colnames(TBL_detalhamento) <- c("sequencia", "nome", "sobrenome")
+colnames(TBL_participantes) <- c("sequencia", "nome", "sobrenome")
+colnames(TBL_area) <- c("sequencia", "codigo", "nome")
+
+print("Master Table (TBL_participacao):")
+print(TBL_participacao)
+print("2nd Level Table (TBL_dados_basicos):")
+print(TBL_dados_basicos)
+print("2nd Level Table (TBL_detalhamento):")
+print(TBL_detalhamento)
+print("2nd Level Table (TBL_participantes):")
+print(TBL_participantes)
+print("3rd Level Table (TBL_area):")
+print(TBL_area)
+
+# Save each table to a csv file
+write.csv(TBL_participacao, "./static/output/TBL_participacao.csv", row.names = FALSE)
+write.csv(TBL_dados_basicos, "./static/output/TBL_dados_basicos.csv", row.names = FALSE)
+write.csv(TBL_detalhamento, "./static/output/TBL_detalhamento.csv", row.names = FALSE)
+write.csv(TBL_participantes, "./static/output/TBL_participantes.csv", row.names = FALSE)
+write.csv(TBL_area, "./static/output/TBL_area.csv", row.names = FALSE)

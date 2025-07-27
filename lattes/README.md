@@ -1,17 +1,16 @@
-# Oficial
-- [ ] Pesquisa, existe biblioteca/método para extração de dados do cnpq?
+# Lattes XML Parser
 
-  - Lattes Extrator - Ferramenta oficial, extremamente burocrática do cnpq.
-  - https://github.com/jpmenachalco/scriptLattes/tree/main/scriptLattes
+-   [ ] Pesquisa: existe biblioteca/método para extração de dados do cnpq?
 
-- [x] Pesquisa, existe biblioteca/parser para extração de dados de arquivo XML?
+    -   Lattes Extrator - Ferramenta oficial extremamente burocrática do cnpq.
+    -   https://github.com/jpmenachalco/scriptLattes/tree/main/scriptLattes
 
-  - Bibliotecas em R para extração de dados de arquivo XML:
+-   [x] Pesquisa: existe biblioteca/parser para extração de dados de arquivo XML?
 
-    - [xml2 lib](https://xml2.r-lib.org/)
-    - [xmlconvert: xml para df](https://cran.r-project.org/web/packages/xmlconvert/xmlconvert.pdf)
+    -   Bibliotecas em R para extração de dados de arquivo XML:
 
-<!-- # Extra oficial
+        -   [xml2 lib](https://xml2.r-lib.org/)
+        -   [xmlconvert: xml para df](https://cran.r-project.org/web/packages/xmlconvert/xmlconvert.pdf)
 
 - [ ] Pesquisa, é possível pular o captcha?
 
@@ -21,7 +20,6 @@
   - burp - ferramenta de interceptação de requisições HTTP
   - mitmproxy - ferramenta de interceptação de requisições HTTP -->
 
-
 # Tarefa 1
 
 Extrair informações da seção: “Participação em bancas de trabalhos de conclusão”.
@@ -29,14 +27,14 @@ Extrair informações da seção: “Participação em bancas de trabalhos de co
 X-PATH ".//PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO"
 
 A tarefa final consistirá em escrever um script R para:
-- extrair todas as informações de modo estruturado
-- de várias seções diferentes (a serem especificadas ainda)
-- a partir de N arquivos XML salvos em um diretório local
+
+-   extrair todas as informações de modo estruturado
+-   de várias seções diferentes (a serem especificadas ainda)
+-   a partir de N arquivos XML salvos em um diretório local
 
 <!-- [Arquivo XML para executar a tarefa](./gitignore/lattes-professor.xml) -->
 
 Investigando a estrutura do arquivo XML manualmente e baseando-se no formulário do Lattes disponível na página de edição do currículo na plataforma do cnpq encontramos o seguinte padrão, para a seção de “Participação em bancas de trabalhos de conclusão”
-
 
 ![Diagrama de classes do nó de Participação em trabalhos de conclusão](./docs/diagrama_participacao_trabalhos_conclusao.png)
 
@@ -46,14 +44,65 @@ Diagrama de classes do nó de Participação em trabalhos de conclusão
 
 A estrutura do nó consiste em um nó raiz chamado `PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO` que contém os seguintes nós filhos:
 
-- "PARTICIPACAO-EM-BANCA-DE-MESTRADO"
-- "PARTICIPACAO-EM-BANCA-DE-DOUTORADO"
-- "PARTICIPACAO-EM-BANCA-DE-EXAME-QUALIFICACAO"
-- "PARTICIPACAO-EM-BANCA-DE-APERFEICOAMENTO-ESPECIALIZACAO"
-- "PARTICIPACAO-EM-BANCA-DE-GRADUACAO"
+-   "PARTICIPACAO-EM-BANCA-DE-MESTRADO"
+-   "PARTICIPACAO-EM-BANCA-DE-DOUTORADO"
+-   "PARTICIPACAO-EM-BANCA-DE-EXAME-QUALIFICACAO"
+-   "PARTICIPACAO-EM-BANCA-DE-APERFEICOAMENTO-ESPECIALIZACAO"
+-   "PARTICIPACAO-EM-BANCA-DE-GRADUACAO"
 
-Cada um dos nós compartilha a mesma estrutura de  filhos, assim uma classe genérica chamada `PARTICIPACAO-EM-BANCA` foi criada posibilitando a simplificação do modelo de classes.
+Cada um dos nós compartilha a mesma estrutura de filhos, assim uma classe genérica chamada `PARTICIPACAO-EM-BANCA` foi criada posibilitando a simplificação do modelo de classes.
 
 O atributo `natureza` é comum a todos os nós e está presente na classe `DADOS-BASICOS-DE-PARTICIPACAO-EM-BANCA`, esse atributo informa se a participação foi em banca de mestrado, doutorado, exame de qualificação, aperfeiçoamento ou graduação.
 
 ---
+
+# Como usar o script [lattes_xml.parse3.r](./lattes_xml.parse3.r)
+
+**Nota: A estrutura ainda não reflete o modelo de classes do diagrama, mas já está funcional.**
+
+1. Defina o currículo a ser processado.
+
+```r
+# Arquivo com o XML a ser lido
+file <- xml2::read_xml("./static/cv_lattes.xml", encoding = "ISO-8859-1")
+```
+
+2. Defina o nó onde estão os dados de participação.
+
+```r
+# Nó que contém as informações de participação em bancas
+node <- xml2::xml_find_all(file, ".//PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO")
+```
+
+3. Defina como irá salvar os dados ( final do arquivo ).
+
+```r
+# Salvar os dados em CSV
+save_as("csv")
+save_as("rsqlite")
+```
+
+no modo csv será criado um arquivo CSV para cada tabela, no modo rsqlite será criado um banco de dados SQLITE com as mesmas tabelas.
+
+As tabelas são as seguintes:
+- `TBL_participacao`
+- `TBL_dados_basicos`
+- `TBL_detalhamento`
+- `TBL_participantes`
+- `TBL_informacoes_adicionais`
+- `TBL_setores_atividades`
+- `TBL_palavras_chave`
+- `TBL_area_conhecimento`
+
+4. Execute o script.
+
+O script irá processar o arquivo XML, em um loop, e irá extrair os dado de cada nó em cada nível, e irá salvar os dados em um dataframe para cada tabela. A função `save_as` apenas irá salvar os dados no formato escolhido, seja CSV ou RSQLite.
+
+**Nota: Certifique-se de ter as libs instaladas. Os script tentará instalar, caso não seja possível sairá com erro.**
+
+# UUID
+
+Para diferenciar os registros de um currículo dos outros, eu criei um UUID (Universally Unique Identifier) para cada currículo, o UUID fará a junção entre os dados das tabelas, mantendo a integridade referencial dos resitros.
+
+Por enquanto, estamos trabalhando somente com os dados da banca, por esse motivo, estou usando um UUID.
+Também seria possível utilizar o número da identidade presente no currículo, ou o número identificado do currículo. Mas para evitar expor dados sensíveis, estou utilizando o UUID.
