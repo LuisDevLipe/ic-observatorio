@@ -96,7 +96,16 @@ for (table in node) {
         # Push the attributes of the child table to the 2nd level table, each table will have the unique id of the parent table as well as the column "sequencia"
         # Furthermore, each child could have its own attributes, they represent different data, so we will push to individual tables.
         if (grepl("DADOS-BASICOS-DA-PARTICIPACAO-EM-BANCA", child_table_name, ignore.case = FALSE)) {
-          TBL_dados_basicos <- rbind(TBL_dados_basicos, c(table_id, inner_table_attrs, child_table_attrs))
+          if ("TIPO" %in% names(child_table_attrs)) {
+            # add the table as is
+            TBL_dados_basicos <- rbind(TBL_dados_basicos, c(table_id, inner_table_attrs, child_table_attrs))
+          } else {
+            # insert a column "tipo" and default value N/A.
+            # Because only the NATUREZA: MESTRADO has as "tipo" column, others don't, this will re-align the data.
+            fixing_child_table_attrs <- append(child_table_attrs, 'N/A', after = 1 ) 
+            # anatomy of the target table should be: "natureza", "tipo", "titulo","ano","pais","idioma","homepage","DOI","titulo_ingles"
+            TBL_dados_basicos <- rbind(TBL_dados_basicos, c(table_id, inner_table_attrs, fixing_child_table_attrs))
+          }
         } else if (grepl("DETALHAMENTO-DA-PARTICIPACAO-EM-BANCA", child_table_name, ignore.case = FALSE)) {
           TBL_detalhamento <- rbind(TBL_detalhamento, c(table_id, inner_table_attrs, child_table_attrs))
         } else if (child_table_name == "PARTICIPANTE-BANCA") {
@@ -108,7 +117,7 @@ for (table in node) {
           # We will iterate over it and push each column to a new row.
           # This is a workaround to avoid having multiple columns with the same name.
           for (attr in child_table_attrs) {
-             # if the attribute is empty, we will skip it
+            # if the attribute is empty, we will skip it
             if (attr == "") next
             TBL_setores_atividades <- rbind(TBL_setores_atividades, c(table_id, inner_table_attrs, attr))
           }
@@ -187,4 +196,4 @@ save_as <- function(format = "csv") {
   }
 }
 
-save_as("csv")  # Save as CSV files
+save_as("csv") # Save as CSV files
