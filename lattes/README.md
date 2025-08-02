@@ -98,11 +98,11 @@ As tabelas são as seguintes:
 
 O script irá processar o arquivo XML, em um loop, e irá extrair os dado de cada nó em cada nível, e irá salvar os dados em um dataframe para cada tabela. A função `save_as` apenas irá salvar os dados no formato escolhido, seja CSV ou RSQLite.
 
-**Nota: Certifique-se de ter as libs instaladas. Os script tentará instalar, caso não seja possível sairá com erro.**
+**Nota: Certifique-se de que as bibliotecas estejam instaladas. O script tentará instalá-las automaticamente, mas se não for possível, ele encerrará com erro.**
 
 # UUID
 
-Para diferenciar os registros de um currículo dos outros, eu criei um UUID (Universally Unique Identifier) para cada currículo, o UUID fará a junção entre os dados das tabelas, mantendo a integridade referencial dos resitros.
+Para diferenciar os registros de um currículo dos outros, eu criei um UUID (Universally Unique Identifier) para cada currículo, o UUID fará a junção entre os dados das tabelas, mantendo a integridade referencial dos registros.
 
-Por enquanto, estamos trabalhando somente com os dados da banca, por esse motivo, estou usando um UUID.
-Também seria possível utilizar o número da identidade presente no currículo, ou o número identificado do currículo. Mas para evitar expor dados sensíveis, estou utilizando o UUID.
+Por enquanto, estamos trabalhando somente com os dados da banca, por esse motivo estou usando um UUID.
+Também seria possível utilizar o número da identidade presente no currículo, ou o número identificador do currículo. Mas para evitar expor dados sensíveis estou utilizando o UUID.
