@@ -80,6 +80,7 @@ node <- xml2::xml_find_all(file, ".//PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO")
 # Salvar os dados em CSV
 save_as("csv")
 save_as("rsqlite")
+save_as("flat-excel", file_name = "flattened_cv_lattes")
 ```
 
 no modo csv será criado um arquivo CSV para cada tabela, no modo rsqlite será criado um banco de dados SQLITE com as mesmas tabelas.
@@ -93,6 +94,10 @@ As tabelas são as seguintes:
 - `TBL_setores_atividades`
 - `TBL_palavras_chave`
 - `TBL_area_conhecimento`
+
+no modo `flat-excel` será criado um arquivo Excel com uma única aba contendo todos os dados, e o nome do arquivo será o especificado no parâmetro `file_name`.
+
+**Nota: Não é necessário adicionar a extensão `.xlsx` ao nome do arquivo, o script irá adicionar automaticamente.**
 
 4. Execute o script.
 

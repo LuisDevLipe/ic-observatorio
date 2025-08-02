@@ -1,4 +1,4 @@
-libs <- c("curl", "xml2", "RSQLite")
+libs <- c("curl", "xml2", "RSQLite", "uuid", "openxlsx")
 try({
   # Load necessary libraries
   sapply(libs, function(lib) {
@@ -7,7 +7,7 @@ try({
 })
 # If the libraries are not installed, install them
 if (any(!libs %in% installed.packages())) {
-  install.packages(libs[!libs %in% installed.packages()])
+  install.packages(libs[!libs %in% installed.packages()], repos = "https://cloud.r-project.org/")
   sapply(libs, function(lib) {
     library(lib, character.only = TRUE, quietly = TRUE)
   })
@@ -169,7 +169,7 @@ colnames(TBL_palavras_chave) <- c("uuid", "sequencia", "palavra_chave")
 colnames(TBL_area_conhecimento) <- c("uuid", "sequencia", "grande_area", "area", "subarea", "especialidade")
 
 # Function to save the tables in the desired format
-save_as <- function(format = "csv") {
+save_as <- function(format = "csv", file_name = NULL) {
   if (format == "csv") {
     # Save each table to a csv file
     write.csv(TBL_participacao, "./static/output/TBL_participacao.csv", row.names = FALSE)
@@ -193,7 +193,31 @@ save_as <- function(format = "csv") {
     DBI::dbWriteTable(db, "TBL_area_conhecimento", TBL_area_conhecimento, overwrite = TRUE)
     # Close the database connection
     DBI::dbDisconnect(db)
+  } else if (format == "flat-excel") {
+    if (is.null(file_name)) {
+      stop("Please provide a file name for the Excel file.")
+    }
+    # join all tables into a single data frame
+    tables_list <- list(
+      TBL_participacao = TBL_participacao,
+      TBL_dados_basicos = TBL_dados_basicos,
+      TBL_detalhamento = TBL_detalhamento,
+      TBL_participantes = TBL_participantes,
+      TBL_informacoes_adicionais = TBL_informacoes_adicionais,
+      TBL_setores_atividades = TBL_setores_atividades,
+      TBL_palavras_chave = TBL_palavras_chave,
+      TBL_area_conhecimento = TBL_area_conhecimento
+    )
+    master_df <- Reduce(function(x, y) merge(x, y, by = c("uuid", "sequencia"), all.x = TRUE), tables_list)
+    # using left join to coalesce duplicate columns
+    # Save the master data frame to an Excel file
+    openxlsx::write.xlsx(master_df, file = paste0("./static/output/", file_name, ".xlsx"), rowNames = FALSE)
   }
 }
 
 save_as("csv") # Save as CSV files
+
+save_as("rsqlite") # Save as SQLite database (same csv structure)
+
+# Note ... Don't add .xlsx extension to file_name with excel format.
+save_as("flat-excel", file_name = "flattened_cv_lattes") # save as excel flattened in a single sheet having file_name as file name
