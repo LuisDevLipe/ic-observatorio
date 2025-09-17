@@ -56,7 +56,7 @@ O atributo `natureza` é comum a todos os nós e está presente na classe `DADOS
 
 ---
 
-# Como usar o script [lattes_xml.parse3.r](./lattes_xml.parse3.r)
+# Como usar o script [lattes_xml.parse.r](./lattes_xml.parse.r)
 
 **Nota: A estrutura ainda não reflete o modelo de classes do diagrama, mas já está funcional.**
 
