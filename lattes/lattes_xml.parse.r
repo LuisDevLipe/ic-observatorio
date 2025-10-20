@@ -18,10 +18,9 @@ file <- xml2::read_xml("./static/cv_lattes.xml", encoding = "ISO-8859-1")
 # Nó que contém as informações de participação em bancas
 node <- xml2::xml_find_all(file, ".//PARTICIPACAO-EM-BANCA-TRABALHOS-CONCLUSAO")
 
-xml_to_dataframe <- function(filepath, encoding, node_path){
+xml_to_dataframe <- function(filepath, encoding, node_path) {
   file <- xml2::read_xml(filepath, encoding = encoding)
   node <- xml2::xml_find_all(file, node_path)
-  
 }
 
 # Go the end of the file to se the save_as function
