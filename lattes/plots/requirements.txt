@@ -1,0 +1,11 @@
+matplotlib
+numpy
+pandas
+jupyter
+ipykernel
+openpyxl
+wordcloud
+seaborn
+notebook<7
+rise
+jupyterlab_rise
