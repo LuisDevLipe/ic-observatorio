@@ -28,8 +28,8 @@ xml_to_dataframe <- function(filepath, encoding, node_path) {
 
 # Create a data frame for the top level table PARTICIPACAO-EM-BANCA-DE-MESTRADO/DOUTORADO/...
 # With 2 columns: uuid and sequencia
-TBL_participacao <- data.frame()
-TBL_participacao <- data.frame(matrix(ncol = length(), nrow = 0), stringsAsFactors = FALSE)
+# TBL_participacao <- data.frame()
+TBL_participacao <- data.frame(matrix(ncol = 2, nrow = 0), stringsAsFactors = FALSE)
 
 
 # Create a data frame for each of the 2nd level tables with corresponding columns
@@ -223,7 +223,8 @@ save_as <- function(format = "csv", file_name = NULL) {
   }
 }
 
-save_as("csv") # Save as CSV files
+# save_as("csv") # Save as CSV files
+save_as("flat-excel", file_name = "participacao_em_bancas")
 
 # save_as("rsqlite") # Save as SQLite database (same csv structure)
 
