@@ -111,3 +111,31 @@ Para diferenciar os registros de um currículo dos outros, eu criei um UUID (Uni
 
 Por enquanto, estamos trabalhando somente com os dados da banca, por esse motivo estou usando um UUID.
 Também seria possível utilizar o número da identidade presente no currículo, ou o número identificador do currículo. Mas para evitar expor dados sensíveis estou utilizando o UUID.
+
+# Instruções para executar o Slideshow
+
+1. Entre no diretório plots
+2. Ative o ambiente virtual
+    ```bash
+    source ../.venv/bin/activate
+    ```
+3. Instale as dependências
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. Execute o Jupyter Notebook (opcional)  
+    ```bash
+    jupyter-notebook main.ipynb
+    ```
+5. Gere o slideshow
+    ```bash
+    jupyter nbconvert main.ipynb --to slides  --post serve --no-input --no-prompt
+    ```
+6. Configure o Slide Automático (opcional)
+
+  1. No arquivo `main.slides.html`, adicione as seguintes linhas dentro do bloco de configuração do Reveal.js:
+
+    ```javascript
+    autoSlide: 5000, // Tempo em milissegundos para avançar automaticamente
+    loop: true, // Habilita o loop das slides
+    ```
